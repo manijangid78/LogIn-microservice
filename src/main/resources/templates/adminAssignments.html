@@ -16,7 +16,7 @@
 <body>
 
     <div class="container">
-      <h1>Assigned Tasks</h1>
+        <h1>Assigned Tasks</h1>
 
         <tr th:each="assignment: ${assignments}">
             <td th:text="${assignment}" /><br>
@@ -29,13 +29,14 @@
         <tr th:each="assignment: ${completeAssignments}">
             <td th:text="${assignment}" /><br>
         </tr>
-
+        <br>
         <br>
 
-        <form action="addStudentAssignment" method="get">
-            <button type="submit" class="btn btn-primary">Add Assignment</button>
-        </form>
-
     </div>
+
+
+
+
+
 </body>
 </html>

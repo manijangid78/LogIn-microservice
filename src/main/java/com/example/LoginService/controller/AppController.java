@@ -50,13 +50,22 @@ public class AppController {
         return "login";
     }
 
+    @GetMapping("/addAssignment")
+    public String addAssignment(){
+        return "addAssignment";
+    }
+
     @GetMapping("/students")
     public String students(HttpSession httpSession, Model model){
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
+        String assignments = restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/assignments", HttpMethod.GET, entity, String.class).getBody();
         String students = restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/students", HttpMethod.GET, entity, String.class).getBody();
+
+        String str1[] = assignments.split("\\[|]");
+        List<String> str2 = Arrays.asList(str1[1].split("\",\"|\""));
 
         // Converting string into map
         String student[] = students.split("\\{|}");
@@ -68,9 +77,18 @@ public class AppController {
             String str[] = std.split("\"");
             studentIdName.put(str[1],str[3]);
         }
+
+        model.addAttribute("allAssignment",str2);
         model.addAttribute("studentsName",studentIdName);
 
         return "students";
+    }
+
+    @GetMapping("student/{id}/addStudentAssignment")
+    public String addStudentAssignment(HttpSession httpSession, Model model){
+        List<String> assignments = getAssignments(httpSession);
+        model.addAttribute("assignments",assignments);
+        return "allAssignments";
     }
 
     // login password url :http://localhost:8074/login  (POST request)
@@ -107,7 +125,7 @@ public class AppController {
     }
 
     @GetMapping("/student/{id}/assignments")
-    public String getStudentAssignement(@PathVariable("id")String id,Model model) {
+    public String getStudentAssignement(@PathVariable("id")String id, Model model, HttpSession httpSession) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -127,4 +145,37 @@ public class AppController {
         model.addAttribute("completeAssignments", completeAssignments);
         return "assignments";
     }
+
+    @PostMapping("/addAssignment")
+    public String addNewAssignment(@RequestParam("assignment")String assignment, HttpSession httpSession){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/addAssignment?assignment="+assignment, HttpMethod.POST, entity, String.class).getBody();
+        return "redirect:students";
+    }
+
+    @GetMapping("student/{id}/assignment/{assignment}")
+    public String addStudentAssignment(@PathVariable("id")String id,
+                                       @PathVariable("assignment")String assignment, HttpSession httpSession){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        restTemplate.exchange("http://localhost:8072/student/"+id+"/addAssignment?assignment="+assignment, HttpMethod.POST, entity, String.class).getBody();
+        return "redirect:/student/"+id+"/assignments";
+    }
+
+    public List<String> getAssignments(HttpSession httpSession){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        String assignments = restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/assignments", HttpMethod.GET, entity, String.class).getBody();
+
+        String str1[] = assignments.split("\\[|]");
+        List<String> str2 = Arrays.asList(str1[1].split("\",\"|\""));
+        return  str2;
+    }
+
 }

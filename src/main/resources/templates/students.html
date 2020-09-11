@@ -17,7 +17,18 @@
 <body>
 
     <div class="container">
-      <h1>Assigned Tasks</h1>
+        <h1>All Assignments</h1>
+        <span th:each="assignment : ${allAssignment}">
+            <span th:text="${assignment}"></span><br>
+        </span>
+
+        <br>
+        <form action="addAssignment" method="get">
+            <button type="submit" class="btn btn-primary">Add Assignment</button>
+        </form>
+        <br>
+
+        <h1>Student list</h1>
         <ul>
             <li th:each="entry: ${studentsName}">
                 <a th:href="'student/'+${entry.key}+'/assignments'"><span th:text="${entry.value}"></span></a>

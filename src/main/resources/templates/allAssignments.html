@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.com">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Assignments</title>
+    <title>Add-Assignment</title>
 
     <!--    BootStrap Links-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -16,26 +16,10 @@
 <body>
 
     <div class="container">
-      <h1>Assigned Tasks</h1>
-
-        <tr th:each="assignment: ${assignments}">
-            <td th:text="${assignment}" /><br>
-        </tr>
-
-        <br>
-        <br>
-
-        <h1>Completed Tasks</h1>
-        <tr th:each="assignment: ${completeAssignments}">
-            <td th:text="${assignment}" /><br>
-        </tr>
-
-        <br>
-
-        <form action="addStudentAssignment" method="get">
-            <button type="submit" class="btn btn-primary">Add Assignment</button>
-        </form>
-
+        <span th:each="assignment : ${assignments}">
+            <a th:href="'assignment/'+${assignment}" name="assignment"><span th:text="${assignment}"></span><br></a>
+        </span>
     </div>
+
 </body>
 </html>
