@@ -1,0 +1,16 @@
+# Spring properties
+spring:
+  application:
+    name: login-service
+
+# Discovery Server Access
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+# HTTP Server
+server:
+  port: 8074

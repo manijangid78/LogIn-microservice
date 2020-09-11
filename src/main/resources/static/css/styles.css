@@ -1,0 +1,22 @@
+.container{
+    margin-top:7%;
+    width:50%;
+}
+
+.welcome{
+    text-align:center;
+}
+
+button{
+    margin-top:2%;
+}
+
+.welcomeButton{
+    display:inline-block;
+}
+
+img{
+    width:50%;
+    height:70%;
+    margin :3%;
+}
