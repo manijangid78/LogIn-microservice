@@ -12,15 +12,13 @@
 
     <link rel="stylesheet" href="css/styles.css">
 
-    
-
 </head>
 <body>
 
     <div class="container">
         <h1>Assignments</h1>
         <span th:each="assignment : ${assignments}">
-            <a th:href="'assignment/'+${assignment}" name="assignment"><span th:text="${assignment}"></span><br></a>
+            <a th:href="'addCompleteAssignment/'+${assignment}" name="assignment"><span th:text="${assignment}"></span><br></a>
         </span>
     </div>
 

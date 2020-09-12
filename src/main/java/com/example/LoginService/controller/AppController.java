@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @SessionAttributes("user")
@@ -34,14 +31,17 @@ public class AppController {
     }
 
     @GetMapping("welcomeAdmin")
-    public String welcomeAdmin(HttpSession httpSession) {
-        httpSession.setAttribute("user", "admin");
+    public String welcomeAdmin(HttpSession httpSession, Model model) {
+        httpSession.setAttribute("user","admin");
+        System.out.println(httpSession.getAttribute("user"));
+        model.addAttribute("users","Admin");
         return "login";
     }
 
     @GetMapping("welcomeStudent")
-    public String welcomeStudent(HttpSession httpSession){
+    public String welcomeStudent(HttpSession httpSession, Model model){
         httpSession.setAttribute("user","student");
+        model.addAttribute("users", "Student");
         return "login";
     }
 
@@ -64,19 +64,26 @@ public class AppController {
         String assignments = restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/assignments", HttpMethod.GET, entity, String.class).getBody();
         String students = restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/students", HttpMethod.GET, entity, String.class).getBody();
 
-        String str1[] = assignments.split("\\[|]");
-        List<String> str2 = Arrays.asList(str1[1].split("\",\"|\""));
-
-        // Converting string into map
-        String student[] = students.split("\\{|}");
-        String id_name[] = student[1].split(",");
-
+        List<String> str2 = new ArrayList<>();
         Map<String,String> studentIdName = new HashMap<>();
 
-        for (String std: id_name) {
-            String str[] = std.split("\"");
-            studentIdName.put(str[1],str[3]);
-        }
+        try {
+
+            String str1[] = assignments.split("\\[|]");
+            str2 = Arrays.asList(str1[1].split("\",\"|\""));
+        }catch (Exception e){}
+
+        try{
+            // Converting string into map
+            String student[] = students.split("\\{|}");
+            String id_name[] = student[1].split(",");
+
+            for (String std: id_name) {
+                String str[] = std.split("\"");
+                studentIdName.put(str[1],str[3]);
+            }
+
+        }catch (Exception e){}
 
         model.addAttribute("allAssignment",str2);
         model.addAttribute("studentsName",studentIdName);
@@ -96,13 +103,17 @@ public class AppController {
     public String login(@RequestParam("email")String email, @RequestParam("password")String password,
                         HttpSession httpSession, Model model){
 
+        System.out.println(email+" "+ password);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
         String login;
 
+        System.out.println(httpSession.getAttribute("user"));
+
         if(httpSession.getAttribute("user").equals("admin")){
+            System.out.println("done");
             login = restTemplate.exchange("http://localhost:8072/admin/login?id="+email+"&password="+password, HttpMethod.POST, entity, String.class).getBody();
             System.out.println(login);
             if(login.equals("true")){
@@ -124,8 +135,9 @@ public class AppController {
         }
     }
 
+
     @GetMapping("/student/{id}/assignments")
-    public String getStudentAssignement(@PathVariable("id")String id, Model model, HttpSession httpSession) {
+    public String getStudentAssignment(@PathVariable("id")String id, Model model, HttpSession httpSession) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -138,11 +150,21 @@ public class AppController {
         String str2[] = completeAssignment.split("\\[|]");
 
         // convert string into list of string
-        List<String> assignments = Arrays.asList(str1[1].split("\",\"|\""));
-        List<String> completeAssignments = Arrays.asList(str2[1].split("\",\"|\""));
+        List<String> assignments = new ArrayList<>();
+        List<String> completeAssignments = new ArrayList<>();
+        try {
+             assignments = Arrays.asList(str1[1].split("\",\"|\""));
+        }catch (Exception e){}
+        try{
+            completeAssignments = Arrays.asList(str2[1].split("\",\"|\""));
+        }catch (Exception e){}
 
         model.addAttribute("assignments", assignments);
         model.addAttribute("completeAssignments", completeAssignments);
+
+        if(httpSession.getAttribute("user").equals("admin")){
+            return "adminAssignments";
+        }
         return "assignments";
     }
 
@@ -166,6 +188,36 @@ public class AppController {
         return "redirect:/student/"+id+"/assignments";
     }
 
+    @GetMapping("student/{id}/addCompleteAssignment")
+    public String addCompleteAssignment(@PathVariable("id")String id, HttpSession httpSession, Model model){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        String assignments = restTemplate.exchange("http://localhost:8072/student/"+id+"/assignments", HttpMethod.GET, entity, String.class).getBody();
+
+        String str1[] = assignments.split("\\[|]");
+        List<String> str2 = new ArrayList<>();
+        try {
+            str2 = Arrays.asList(str1[1].split("\",\"|\""));
+        }catch (Exception e){}
+
+        model.addAttribute("assignments", str2);
+        return "addCompleteAssignments";
+    }
+
+    @GetMapping("student/{id}/addCompleteAssignment/{assignment}")
+    public String addCompletedAssignment(@PathVariable("id")String id, @PathVariable("assignment")String assignment){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        restTemplate.exchange("http://localhost:8072/student/"+id+"/addCompleteAssignment?assignment="+assignment, HttpMethod.POST, entity, String.class).getBody();
+
+        return "redirect:/student/"+id+"/assignments";
+    }
+
     public List<String> getAssignments(HttpSession httpSession){
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -174,7 +226,10 @@ public class AppController {
         String assignments = restTemplate.exchange("http://localhost:8072/admin/"+httpSession.getAttribute("id")+"/assignments", HttpMethod.GET, entity, String.class).getBody();
 
         String str1[] = assignments.split("\\[|]");
-        List<String> str2 = Arrays.asList(str1[1].split("\",\"|\""));
+        List<String> str2 = new ArrayList<>();
+        try {
+            str2 = Arrays.asList(str1[1].split("\",\"|\""));
+        }catch (Exception e){}
         return  str2;
     }
 

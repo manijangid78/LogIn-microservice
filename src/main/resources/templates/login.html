@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymelead.com">
 <head>
     <meta charset="UTF-8">
     <title>Login-Blog</title>
@@ -16,8 +16,9 @@
 <body>
 
     <div class="container">
+        <h1 th:text="'Welcome '+${users}"></h1>
 
-        <form action="login" method="post">
+        <form class="loginForm" action="login" method="post">
             <div class="form-group">
                 <label>Email address</label>
                 <input type="text" class="form-control" name="email" aria-describedby="emailHelp" required autofocus>
