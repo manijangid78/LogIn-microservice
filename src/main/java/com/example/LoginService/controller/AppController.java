@@ -33,7 +33,6 @@ public class AppController {
     @GetMapping("welcomeAdmin")
     public String welcomeAdmin(HttpSession httpSession, Model model) {
         httpSession.setAttribute("user","admin");
-        System.out.println(httpSession.getAttribute("user"));
         model.addAttribute("users","Admin");
         return "login";
     }
@@ -103,14 +102,11 @@ public class AppController {
     public String login(@RequestParam("email")String email, @RequestParam("password")String password,
                         HttpSession httpSession, Model model){
 
-        System.out.println(email+" "+ password);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
         String login;
-
-        System.out.println(httpSession.getAttribute("user"));
 
         if(httpSession.getAttribute("user").equals("admin")){
             System.out.println("done");
