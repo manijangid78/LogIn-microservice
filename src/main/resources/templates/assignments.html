@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.com">
 <head>
     <meta charset="UTF-8">
-    <title>Assignments</title>
+    <title>SpringBoot</title>
 
     <!--    BootStrap Links-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -16,19 +16,28 @@
 <body>
 
     <div class="container">
-      <h1>Assigned Tasks</h1>
+        <div class="row">
+            <div class="col-6">
+                <h1>Assigned Tasks</h1>
 
-        <tr th:each="assignment: ${assignments}">
-            <td th:text="${assignment}" /><br>
-        </tr>
+                <tr th:each="assignment: ${assignments}">
+                <td th:text="${assignment}" /><br>
+                </tr>
+            </div>
+            <div class="col-6">
+                <h1>Completed Tasks</h1>
+                <tr th:each="assignment: ${completeAssignments}">
+                    <td th:text="${assignment}" /><br>
+                </tr>
+            </div>
+        </div>
 
         <br>
         <br>
 
-        <h1>Completed Tasks</h1>
-        <tr th:each="assignment: ${completeAssignments}">
-            <td th:text="${assignment}" /><br>
-        </tr>
+        <form action="addCompleteAssignment" method="get">
+            <button type="submit" class="btn btn-primary addAssign">Complete Assignment</button>
+        </form>
 
     </div>
 </body>

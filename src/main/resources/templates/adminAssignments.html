@@ -12,38 +12,36 @@
 
     <link rel="stylesheet" href="css/styles.css">
 
-
 </head>
 <body>
 
     <div class="container">
 
         <div class="row">
-
-            <div class="col-lg-6 col-md-6 col-12">
-                <h1>All Assignments</h1>
-                <ul>
-                    <span th:each="assignment : ${allAssignment}">
-                        <li><span th:text="${assignment}"></span><br></li>
-                    </span>
-                </ul>
-                <form action="addAssignment" method="get">
-                    <center><button type="submit" class="btn btn-primary addAssign">Add Assignment</button></center>
-                </form>
-                <br>
+            <div class="col-6">
+                <h1>Assigned Tasks</h1>
+                <tr th:each="assignment: ${assignments}">
+                    <td th:text="${assignment}" /><br>
+                </tr>
             </div>
-
-            <div class="col-lg-6 col-md-6 col-12">
-                <h1>Student list</h1>
-                <ul>
-                    <li th:each="entry: ${studentsName}">
-                        <a th:href="'student/'+${entry.key}+'/assignments'"><span th:text="${entry.value}"></span></a>
-                    </li>
-                </ul>
+            <div class="col-6">
+                <h1>Completed Tasks</h1>
+                <tr th:each="assignment: ${completeAssignments}">
+                    <td th:text="${assignment}" /><br>
+                </tr>
             </div>
-
         </div>
 
+        <br>
+        <br>
+
+        <form action="addStudentAssignment" method="get">
+            <button type="submit" class="btn btn-dark addAssign">Add Assignment</button>
+        </form>
+
+        <br>
+
     </div>
+
 </body>
 </html>
