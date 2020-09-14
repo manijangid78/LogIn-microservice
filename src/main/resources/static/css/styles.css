@@ -1,3 +1,8 @@
+.bdy{
+    margin-top:0;
+    background-color:#d6e0f0;
+}
+
 .container{
     margin-top:7%;
 }
@@ -24,6 +29,7 @@ button{
 }
 
 h1{
+    color:#393b44;
     margin:5% 10% ;
     font-style: italic;
     font-weight:bold;
