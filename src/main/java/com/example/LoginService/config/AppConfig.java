@@ -14,6 +14,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addViewController("/").setViewName("home");
     }
 
+
     @Bean
     public RestTemplate getRestTemplate(){
         return new RestTemplate();
